@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Access Management System</title>
+</head>
+<body>
+{% if messages %}
+    <script>
+        {% for message in messages %}
+            alert("{{ message }}");
+        {% endfor %}
+    </script>
+{% endif %}
+<ul>
+    <li><a href="{% url 'write_card' %}">Write on an existing card</a></li>
+    <li><a href="{% url 'add_card' %}">Add a new card to the database</a></li>
+</ul>
+</body>
+</html>
