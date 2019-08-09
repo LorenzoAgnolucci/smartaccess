@@ -7,9 +7,9 @@ from django.utils import timezone
 
 
 class RFIDCard(models.Model):
-    card_id = models.IntegerField()
+    card_id = models.IntegerField(primary_key=True)
     remaining_accesses = models.IntegerField(default=0)
-    expiration_date = models.DateField(default=datetime.date.today)
+    expiration_date = models.DateField(default=timezone.now)
 
     def __str__(self):
         return "Id: {}, remaining accesses: {}, expiration date: {}".format(self.card_id, self.remaining_accesses,
@@ -18,11 +18,15 @@ class RFIDCard(models.Model):
 
 class Log(models.Model):
     id = models.AutoField(primary_key=True)
-    card_id = models.ForeignKey(RFIDCard, on_delete=models.CASCADE)
-    photo = models.ImageField(upload_to="{}.jpg".format(id))
-    log_datetime = models.DateTimeField(default=datetime.datetime.now)
-    age = models.IntegerField()
-    sex = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
+    card = models.ForeignKey(RFIDCard, on_delete=models.CASCADE, null=True)
+    photo = models.ImageField(upload_to="{}.jpg".format(id), unique=True, null=True)
+    log_datetime = models.DateTimeField(default=timezone.datetime.now)
+    age = models.IntegerField(null=True)
+    sex = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')), null=True)
+
+    def __str__(self):
+        return 'Id: {}, card: {}, time: {}'.format(self.id, self.card, self.log_datetime)
+
 
 # TODO: Controllare se id come Autofield funziona
 # FIXME: Capire per bene come fare store di immagini. Decidere se cancellare Log se si cancella card (ammesso che si possa cancellare una card)
