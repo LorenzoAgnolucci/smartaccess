@@ -83,7 +83,6 @@ def access(request):
             card.remaining_accesses -= 1
             log_data = get_photo_data()
             log_data['card'] = card
-            # FIXME migrate log model refactor card
             log_data['log_datetime'] = timezone.now()
 
             new_log = Log(**log_data)
@@ -114,7 +113,7 @@ def access(request):
         # lcd.clear()
     return render(request, 'rfid/access.html')
 
-
+# TODO test the views
 # FIXME: Dopo Submit non si viene reindirizzati a index (forse per posizione di read())
 # FIXME: Alert vengono mostrati tutti dopo ogni reindirizzamento e dopo aver fatto scan della carta
 #  (forse perchè codice per messages è sia in index.html che in write_card.html)
