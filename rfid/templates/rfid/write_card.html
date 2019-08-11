@@ -24,7 +24,7 @@
     </script>
 {% endif %}
 
-<form action="{% url 'write_card' %}" method="post">
+<form action="{% url 'rfid:write_card' %}" method="post">
     {% csrf_token %}
     <table>
     {{ form.as_table }}

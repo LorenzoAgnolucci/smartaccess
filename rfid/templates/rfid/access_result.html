@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Access Page</title>
+    <script>
+        {# FIXME #}
+        setTimeout(function(){
+            window.location.assign({% url 'rfid:access_main' %});
+            }, 3000);
+    </script>
+</head>
+<body>
+<h1>{{ message }}</h1>
+<p>{{ description }}</p>
+
+<p>Page should reload main access page in 3 seconds, otherwise <a href="{% url 'rfid:access_main' %}">click here.</a></p>
+
+<a href="{% url 'admin:index' %}">Log in</a>
+</body>
+</html>

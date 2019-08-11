@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.utils import timezone
-from django.views.generic.edit import CreateView
+from django.views.generic import TemplateView
 from .models import RFIDCard, Log
 from .forms import WriteCardForm
 # import mfrc522
@@ -13,8 +13,8 @@ import datetime
 import random
 
 
-def index(request):
-    return render(request, "rfid/index.html")
+class IndexView(TemplateView):
+    template_name = 'rfid/index.html'
 
 
 # class AddCardView(TemplateView):
@@ -26,10 +26,10 @@ def add_card(request):
     # card_id = reader.read_id()
     card_id = random.randint(10e11, 10e12)
     if RFIDCard.objects.filter(card_id=card_id).exists():
-        return HttpResponse("The card is already in the database")
+        return HttpResponse('The card is already in the database')
     new_card = RFIDCard(card_id=card_id, remaining_accesses=0, expiration_date=datetime.datetime.today())
     new_card.save()
-    return HttpResponse("Added card {}".format(card_id))
+    return HttpResponse('Added card {}'.format(card_id))
 
 
 def write_card(request):
@@ -48,22 +48,23 @@ def write_card(request):
                 if remaining_accesses < 0:
                     messages.error(request, 'Remaining accesses must be greater than 0')
                     return render(request, 'rfid/index.html')
-                if expiration_date <= datetime.date.today():
+                # TODO remove timedelta in condition
+                if expiration_date <= datetime.date.today() - datetime.timedelta(days=2):
                     messages.error(request, 'New expiration date must be in the future')
                     return render(request, 'rfid/index.html')
                 f.save()
         except RFIDCard.DoesNotExist:
-                messages.error(request, 'You have to add the card to the database before writing on it')
-                return render(request, 'rfid/index.html')
-            # return render(request, 'rfid/index.html', {'error_message': "You have to add the card to the database "
-            #                                                             "before writing on it"})
+            messages.error(request, 'You have to add the card to the database before writing on it')
+            return render(request, 'rfid/index.html')
+        # return render(request, 'rfid/index.html', {'error_message': "You have to add the card to the database "
+        #                                                             "before writing on it"})
         messages.success(request, 'Written on card')
         # return render(request, 'rfid/index.html')
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('rfid:index'))
 
     else:
-        f = WriteCardForm(initial={"card_id": card_id})
-    return render(request, "rfid/write_card.html", {"form": f})
+        f = WriteCardForm(initial={'card_id': card_id})
+    return render(request, 'rfid/write_card.html', {'form': f})
 
 
 def get_photo_data():
@@ -71,47 +72,66 @@ def get_photo_data():
     return {'photo': None, 'age': 27, 'sex': 'M'}
 
 
-def access(request):
+# Displays the page waiting for the card, which redirect to the access view
+class AccessMainView(TemplateView):
+    template_name = 'rfid/access_main.html'
+
+
+def access_result(request, card_id=None):
     # reader = mfrc522.SimpleMFRC522()
     # card_id = reader.read_id()
-    card_id = input('Type card id')
+    if card_id is None:
+        card_id = input('Type card id')
     # lcd = CharLCD(cols=16, rows=2, pin_rs=37, pin_e=35, pins_data=[40, 38, 36, 32, 33, 31, 29, 23])
     # lcd.write_string(u'Scan your card')
-    if RFIDCard.objects.get(card_id=card_id):
-        card = RFIDCard.objects.get(card_id=card_id)
-        if card.remaining_accesses > 0 and card.expiration_date >= datetime.date.today():
-            card.remaining_accesses -= 1
-            log_data = get_photo_data()
-            log_data['card'] = card
-            log_data['log_datetime'] = timezone.now()
+    try:
+        if RFIDCard.objects.get(card_id=card_id):
+            card = RFIDCard.objects.get(card_id=card_id)
+            if card.remaining_accesses > 0 and card.expiration_date >= datetime.date.today():
+                card.remaining_accesses -= 1
+                log_data = get_photo_data()
+                log_data['card'] = card
+                log_data['log_datetime'] = timezone.now()
 
-            new_log = Log(**log_data)
+                new_log = Log(**log_data)
 
-            card.save()
-            new_log.save()
-            print('Welcome\n{} remaining'.format(card.remaining_accesses))
-            # TODO implement printing messages on LCD display and red/green led
-            #  see http://www.circuitbasics.com/raspberry-pi-lcd-set-up-and-programming-in-python/
-            # lcd.write_string(u'Welcome\n\r{} remaining'.format(card.remaining_accesses))
-            # time.sleep(3)
-            # lcd.clear()
-            return render(request, 'rfid/access.html')
-        elif card.expiration_date < datetime.date.today():
-            print('Card expired')
-            # lcd.write_string(u'Card expired')
-            # time.sleep(3)
-            # lcd.clear()
-        else:
-            print('No accesses\nPlease recharge')
-            # lcd.write_string(u'No accesses\n\rPlease recharge')
-            # time.sleep(3)
-            # lcd.clear()
-    else:
-        print('Card not\nregistered')
+                card.save()
+                new_log.save()
+                message = 'Welcome!'
+                description = 'You have {} accesses left. ' \
+                              'The card will expire on {}'.format(card.remaining_accesses,
+                                                                  card.expiration_date)
+                # TODO implement printing messages on LCD display and red/green led
+                #  see http://www.circuitbasics.com/raspberry-pi-lcd-set-up-and-programming-in-python/
+                # lcd.write_string(u'Welcome\n\r{} remaining'.format(card.remaining_accesses))
+                # time.sleep(3)
+                # lcd.clear()
+            elif card.remaining_accesses == 0:
+                message = 'No accesses'
+                description = 'You have no more accesses remained. ' \
+                              'Please recharge your card at the reception'
+                # lcd.write_string(u'No accesses\n\rPlease recharge')
+                # time.sleep(3)
+                # lcd.clear()
+            else:
+                message = 'Card expired'
+                description = 'We\'re sorry, your last {} accesses expired on {}, ' \
+                              'please buy new accesses at the reception'.format(card.remaining_accesses,
+                                                                                card.expiration_date)
+                # lcd.write_string(u'Card expired')
+                # time.sleep(3)
+                # lcd.clear()
+    except RFIDCard.DoesNotExist:
+        message = 'Card not registered'
+        description = 'It seems that we haven\'t registered this card. ' \
+                      'Please ask for help at the reception'
         # lcd.write_string(u'Card not\n\rregistered')
         # time.sleep(3)
         # lcd.clear()
-    return render(request, 'rfid/access.html')
+    return render(request, 'rfid/access_result.html', {
+        'message': message,
+        'description': description
+    })
 
 # TODO test the views
 # FIXME: Dopo Submit non si viene reindirizzati a index (forse per posizione di read())

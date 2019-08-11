@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Access Page</title>
+    <script>
+        {# FIXME #}
+        setTimeout(function(){
+            window.location.assign({% url 'rfid:access_result' %});
+            }, 1000);
+    </script>
+</head>
+<body>
+<p>
+    Scan your card...
+</p>
+<p>Page should redirect to card scanning.<br>
+    If not working <a href="{% url 'rfid:access_result' %}">click here</a></p>
+<a href="{% url 'admin:index' %}">Log in</a>
+</body>
+</html>
