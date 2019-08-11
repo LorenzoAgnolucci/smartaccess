@@ -48,8 +48,7 @@ def write_card(request):
                 if remaining_accesses < 0:
                     messages.error(request, 'Remaining accesses must be greater than 0')
                     return render(request, 'rfid/index.html')
-                # TODO remove timedelta in condition
-                if expiration_date <= datetime.date.today() - datetime.timedelta(days=2):
+                if expiration_date <= datetime.date.today():
                     messages.error(request, 'New expiration date must be in the future')
                     return render(request, 'rfid/index.html')
                 f.save()
@@ -133,10 +132,8 @@ def access_result(request, card_id=None):
         'description': description
     })
 
-# TODO test the views
-# FIXME: Dopo Submit non si viene reindirizzati a index (forse per posizione di read())
 # FIXME: Alert vengono mostrati tutti dopo ogni reindirizzamento e dopo aver fatto scan della carta
+# TODO change message display method, try using web pages redirect like in access_result view
 #  (forse perchè codice per messages è sia in index.html che in write_card.html)
 #  controllare come cancellare vecchi messaggi
 # TODO: Capire per bene come fare reindirizzamenti dopo POST per non fare submit due volte se si ricarica la pagina
-# TODO: Aggiungere una riga al database Log ogni volta che viene fatto qualcosa (forse solo quando si legge una scheda)

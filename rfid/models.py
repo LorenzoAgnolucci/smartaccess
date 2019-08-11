@@ -28,5 +28,4 @@ class Log(models.Model):
         return 'Id: {}, card: {}, time: {}'.format(self.id, self.card, self.log_datetime)
 
 
-# TODO: Controllare se id come Autofield funziona
 # FIXME: Capire per bene come fare store di immagini. Decidere se cancellare Log se si cancella card (ammesso che si possa cancellare una card)
