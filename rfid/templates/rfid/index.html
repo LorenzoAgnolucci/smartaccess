@@ -8,13 +8,13 @@
 
 <h1>Index Page</h1>
 
-{% if messages %}
-    <script>
-        {% for message in messages %}
-            alert("{{ message }}");
-        {% endfor %}
-    </script>
-{% endif %}
+{#{% if messages %}#}
+{#    <script>#}
+{#        {% for message in messages %}#}
+{#            alert("{{ message }}");#}
+{#        {% endfor %}#}
+{#    </script>#}
+{#{% endif %}#}
 <ul>
     <li><a href="{% url 'rfid:write_card' %}">Write on an existing card</a></li>
     <li><a href="{% url 'rfid:add_card' %}">Add a new card to the database</a></li>

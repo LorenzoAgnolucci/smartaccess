@@ -4,8 +4,6 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 
-# TODO switch to django timezone lib
-
 # The primary-key is the card id
 class RFIDCard(models.Model):
     card_id = models.IntegerField(primary_key=True)

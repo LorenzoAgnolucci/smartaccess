@@ -41,9 +41,8 @@ def write_card(request):
     if request.method == 'POST':
         try:
             # card must be scanned
-            # FIXME along with forms validators
-            card = RFIDCard.objects.get(pk='6')
-            f = WriteCardForm(request.POST, instance=card)
+            # TODO check condition forks
+            f = WriteCardForm(request.POST)
             if f.is_valid():
                 remaining_accesses = f.cleaned_data['remaining_accesses']
                 expiration_date = f.cleaned_data['expiration_date']
@@ -54,6 +53,10 @@ def write_card(request):
                     messages.error(request, 'New expiration date must be in the future')
                     return render(request, 'rfid/index.html')
                 f.save()
+            else:
+                args = {'form': f}
+                return render(request, 'rfid/write_card.html', args)
+
         except RFIDCard.DoesNotExist:
             messages.error(request, 'You have to add the card to the database before writing on it')
             return render(request, 'rfid/index.html')
