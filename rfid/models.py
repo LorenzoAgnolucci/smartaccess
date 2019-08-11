@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 # TODO switch to django timezone lib
@@ -29,3 +30,4 @@ class Log(models.Model):
 
 
 # FIXME: Capire per bene come fare store di immagini. Decidere se cancellare Log se si cancella card (ammesso che si possa cancellare una card)
+# TODO check ImageField functioning

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Access Page</title>
+    <title>Smart Access Management System</title>
     <script>
         {# FIXME #}
         setTimeout(function(){
@@ -11,7 +11,11 @@
     </script>
 </head>
 <body>
-<h1>{{ message }}</h1>
+
+<h1>Access</h1>
+
+<h2>{{ message }}</h2>
+
 <p>{{ description }}</p>
 
 <p>Page should reload main access page in 3 seconds, otherwise <a href="{% url 'rfid:access_main' %}">click here.</a></p>

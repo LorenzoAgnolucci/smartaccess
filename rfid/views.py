@@ -40,7 +40,9 @@ def write_card(request):
     card_id = '5279589593186'
     if request.method == 'POST':
         try:
-            card = RFIDCard.objects.get(pk='5279589593186')
+            # card must be scanned
+            # FIXME along with forms validators
+            card = RFIDCard.objects.get(pk='6')
             f = WriteCardForm(request.POST, instance=card)
             if f.is_valid():
                 remaining_accesses = f.cleaned_data['remaining_accesses']
@@ -134,6 +136,7 @@ def access_result(request, card_id=None):
 
 # FIXME: Alert vengono mostrati tutti dopo ogni reindirizzamento e dopo aver fatto scan della carta
 # TODO change message display method, try using web pages redirect like in access_result view
+#  (also using the message framework)
 #  (forse perchè codice per messages è sia in index.html che in write_card.html)
 #  controllare come cancellare vecchi messaggi
 # TODO: Capire per bene come fare reindirizzamenti dopo POST per non fare submit due volte se si ricarica la pagina

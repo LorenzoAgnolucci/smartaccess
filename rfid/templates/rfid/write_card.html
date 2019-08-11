@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Accesses Management System</title>
+    <title>Smart Accesses Management System</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -16,19 +16,31 @@
   </script>
 </head>
 <body>
-{% if messages %}
-    <script>
-        {% for message in messages %}
-            alert("{{ message }}");
-        {% endfor %}
-    </script>
-{% endif %}
+
+<h1>Write new accesses on card</h1>
+
+{#{% if messages %}#}
+{#    <script>#}
+{#        {% for message in messages %}#}
+{#            alert("{{ message }}");#}
+{#        {% endfor %}#}
+{#    </script>#}
+{#{% endif %}#}
 
 <form action="{% url 'rfid:write_card' %}" method="post">
     {% csrf_token %}
     <table>
     {{ form.as_table }}
     </table>
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
+
     <input type="submit" value="Submit">
 </form>
 </body>
