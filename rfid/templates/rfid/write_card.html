@@ -1,37 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Smart Accesses Management System</title>
+
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script>
-  $( function() {
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $( function() {
     $( "#datepicker" ).datepicker({
         dateFormat: "yy-mm-dd"
     });
 
-  } );
-  </script>
-</head>
-<body>
+    } );
+    </script>
 
-<h1>Write new accesses on card</h1>
+    <h1>Write new accesses on card</h1>
 
-{#{% if messages %}#}
-{#    <script>#}
-{#        {% for message in messages %}#}
-{#            alert("{{ message }}");#}
-{#        {% endfor %}#}
-{#    </script>#}
-{#{% endif %}#}
+    {#{% if messages %}#}
+    {#    <script>#}
+    {#        {% for message in messages %}#}
+    {#            alert("{{ message }}");#}
+    {#        {% endfor %}#}
+    {#    </script>#}
+    {#{% endif %}#}
 
-<form action="{% url 'rfid:write_card' %}" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit">
-</form>
-</body>
-</html>
+    <form action="{% url 'rfid:write_card' %}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" value="Submit" class="btn btn-success">
+    </form>
+
+{% endblock %}
+
 
