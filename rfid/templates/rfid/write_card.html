@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
@@ -17,7 +16,7 @@
     } );
     </script>
 
-    <h1>Write new accesses on card</h1>
+    {% block title %}Write new accesses on card{% endblock %}
 
     {#{% if messages %}#}
     {#    <script>#}

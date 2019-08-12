@@ -17,58 +17,73 @@ class IndexView(TemplateView):
     template_name = 'rfid/index.html'
 
 
+class AddCardScanView(TemplateView):
+    template_name = 'rfid/add_card_scan.html'
+
+
+class WriteCardScanView(TemplateView):
+    template_name = 'rfid/write_card_scan.html'
+
+    # def setup(self, request, *args, **kwargs):
+    #     return super().setup(request, *args, **kwargs)
+
+
 # class AddCardView(TemplateView):
 #     template_name = "rfid/add_card.html"
 #
 
 def add_card(request):
-    # reader = mfrc522.SimpleMFRC522()
-    # card_id = reader.read_id()
-    card_id = random.randint(10e11, 10e12)
+    try:
+        card_id = request.session.pop('card_id')
+        request.session.modified = True
+    except KeyError:
+        # reader = mfrc522.SimpleMFRC522()
+        # card_id = reader.read_id()
+        card_id = input('Type card id')
+
     if RFIDCard.objects.filter(card_id=card_id).exists():
-        return HttpResponse('The card is already in the database')
-    new_card = RFIDCard(card_id=card_id, remaining_accesses=0, expiration_date=datetime.datetime.today())
+        return HttpResponse("The card is already in the database")
+
+    new_card = RFIDCard(card_id=card_id)
     new_card.save()
     return HttpResponse('Added card {}'.format(card_id))
 
 
 def write_card(request):
-    messages.info(request, 'Scan the card you want to write on')
-    # reader = mfrc522.SimpleMFRC522()
-    # card_id = reader.read_id()
-    # TODO remember to revert to read_id() function
-    card_id = '5279589593186'
-    if request.method == 'POST':
-        try:
-            # card must be scanned
-            # TODO check condition forks
-            f = WriteCardForm(request.POST)
-            if f.is_valid():
-                remaining_accesses = f.cleaned_data['remaining_accesses']
-                expiration_date = f.cleaned_data['expiration_date']
-                if remaining_accesses < 0:
-                    messages.error(request, 'Remaining accesses must be greater than 0')
-                    return render(request, 'rfid/index.html')
-                if expiration_date <= datetime.date.today():
-                    messages.error(request, 'New expiration date must be in the future')
-                    return render(request, 'rfid/index.html')
-                f.save()
-            else:
-                args = {'form': f}
-                return render(request, 'rfid/write_card.html', args)
+    # messages.info(request, 'Scan the card you want to write on')
 
-        except RFIDCard.DoesNotExist:
-            messages.error(request, 'You have to add the card to the database before writing on it')
-            return render(request, 'rfid/index.html')
-        # return render(request, 'rfid/index.html', {'error_message': "You have to add the card to the database "
-        #                                                             "before writing on it"})
-        messages.success(request, 'Written on card')
-        # return render(request, 'rfid/index.html')
-        return HttpResponseRedirect(reverse('rfid:index'))
+    # check if the card has been scanned before
+    try:
+        card_id = request.session.pop('card_id')
+        request.session.modified = True
+    except KeyError:
+        # reader = mfrc522.SimpleMFRC522()
+        # card_id = reader.read_id()
+        # TODO remember to revert to read_id() function
+        # card_id = '5279589593186'
+        card_id = input('Type card id')
 
-    else:
-        f = WriteCardForm(initial={'card_id': card_id})
-    return render(request, 'rfid/write_card.html', {'form': f})
+    try:
+        card = RFIDCard.objects.get(pk=card_id)
+        if request.method == 'POST':
+            # RFIDCard model bound form
+            form = WriteCardForm(request.POST, instance=card)
+
+            if form.is_valid():
+                # Validation is done at form level in the clean() method override
+                form.save()
+                return render(request, 'rfid/write_card_success.html', context=form.cleaned_data)
+        else:
+            # unbound form
+            form = WriteCardForm(initial={'card_id': card_id})
+
+        request.session['card_id'] = card_id
+        return render(request, 'rfid/write_card.html', {'form': form})
+
+    except RFIDCard.DoesNotExist:
+        # messages.error(request, 'You have to add the card to the database before writing on it')
+        request.session['card_id'] = card_id
+        return render(request, 'rfid/write_card_add_new.html', context={'card_id': card_id})
 
 
 def get_photo_data():

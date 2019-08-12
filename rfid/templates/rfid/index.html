@@ -1,26 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Smart Access Management System</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h1>Index Page</h1>
+{% block content %}
 
-{#{% if messages %}#}
-{#    <script>#}
-{#        {% for message in messages %}#}
-{#            alert("{{ message }}");#}
-{#        {% endfor %}#}
-{#    </script>#}
-{#{% endif %}#}
-<ul>
-    <li><a href="{% url 'rfid:write_card' %}">Write on an existing card</a></li>
-    <li><a href="{% url 'rfid:add_card' %}">Add a new card to the database</a></li>
-    <li><a href="{% url 'rfid:access_main' %}">Client access page</a></li>
-</ul>
-</body>
-</html>
+    {% block title %}Index Page{% endblock %}
+
+{#TODO add nav bar to every page#}
+{#    <nav class="navbar navbar-expand-lg navbar-light bg-light">#}
+{#  <a class="navbar-brand" href="#">Navbar</a>#}
+{#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">#}
+{#    <span class="navbar-toggler-icon"></span>#}
+{#  </button>#}
+{#  <div class="collapse navbar-collapse" id="navbarNav">#}
+{#    <ul class="navbar-nav">#}
+{#      <li class="nav-item active">#}
+{#        <a class="nav-link" href="{% url 'rfid:write_card_scan' %}">Write</a>#}
+{#      </li>#}
+{#      <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'rfid:add_card' %}">Add</a>#}
+{#      </li>#}
+{#      <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'rfid:access_main' %}">Access</a>#}
+{#      </li>#}
+{#      <li class="nav-item">#}
+{#        <a class="nav-link disabled" href="#">Disabled</a>#}
+{#      </li>#}
+{#    </ul>#}
+{#  </div>#}
+{#</nav>#}
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Write</h5>
+            <p class="card-text">Write data on an existing card.</p>
+            <a href="{% url 'rfid:write_card_scan' %}" class="btn btn-primary">Go</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Add</h5>
+            <p class="card-text">Add card to the database</p>
+            <a href="{% url 'rfid:add_card_scan' %}" class="btn btn-primary">Go</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Access</h5>
+            <p class="card-text">Client access page</p>
+            <a href="{% url 'rfid:access_main' %}" class="btn btn-primary">Go</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
 {#TODO add bootstrap style to all web pages, see write_card.html#}
+{% endblock %}
