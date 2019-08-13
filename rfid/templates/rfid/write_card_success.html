@@ -3,7 +3,7 @@
 {% block content %}
 
     {% block title %}Success!{% endblock %}
-    <p>Now the card {{ card_id }} has {{ remaining_accesses }} and will expire on {{ expiration_date }}</p>
+    <p>Now the card {{ card_id }} has {{ remaining_accesses }} remaining accesses and will expire on {{ expiration_date }}</p>
     <a class="btn btn-primary" href="{% url 'rfid:index' %}" role="button">Go to Index</a>
 
 {% endblock %}

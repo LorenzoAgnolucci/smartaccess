@@ -1,5 +1,6 @@
 from ibm_watson import VisualRecognitionV3
 import PIL
+from picamera import PiCamera
 
 
 visual_recognition = VisualRecognitionV3(
@@ -11,7 +12,9 @@ def face_crop(id, face_location):
     # TODO implement with PILLOW
     #  the method should save a fixed dimension squared image in the dir /smartaccess/media/face_crops
     #  named <id>.jpg where id is the id log passed through get_photo_data()
-    pass
+    camera = PiCamera()
+    camera.capture("{}.jpg".format(id))
+    camera.close()
 
 
 def get_photo_data(id):
