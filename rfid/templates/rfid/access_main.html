@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Smart Access Management System</title>
-    <script>
-        {# FIXME #}
-        setTimeout(function(){
-            window.location.assign({% url 'rfid:access_result' %});
-            }, 1000);
+    <script type="text/javascript">
+        function Redirect() {
+            window.location="{% url 'rfid:access_result' %}";
+        }
+        setTimeout('Redirect()', 1000);
     </script>
 </head>
 <body>
