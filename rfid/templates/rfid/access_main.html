@@ -1,24 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Smart Access Management System</title>
+{% extends 'base.html' %}
+
+{% block script %}
+
     <script type="text/javascript">
         function Redirect() {
             window.location="{% url 'rfid:access_result' %}";
         }
         setTimeout('Redirect()', 1000);
     </script>
-</head>
-<body>
 
-<h1>Access</h1>
+{% endblock %}
 
-<p>
-    Scan your card...
-</p>
-<p>Page should redirect to card scanning.<br>
-    If not working <a href="{% url 'rfid:access_result' %}">click here</a></p>
-<a href="{% url 'admin:index' %}">Log in</a>
-</body>
-</html>
+
+{% block content %}
+
+    <h1>Access</h1>
+
+    <p>Scan your card...</p>
+
+    <p>Page should redirect to card scanning.<br>
+        If not working <a href="{% url 'rfid:access_result' %}">click here</a></p>
+
+    <a class="btn btn-primary" href="{% url 'admin:index' %}">Log in</a>
+
+{% endblock %}

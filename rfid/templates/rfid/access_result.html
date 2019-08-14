@@ -1,25 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Smart Access Management System</title>
+{% extends 'base.html' %}
+
+{% block script %}
+
     <script type="text/javascript">
         function Redirect() {
             window.location="{% url 'rfid:access_main' %}";
         }
         setTimeout('Redirect()', 5000);
     </script>
-</head>
-<body>
 
-<h1>Access</h1>
+{% endblock %}
 
-<h2>{{ message }}</h2>
 
-<p>{{ description }}</p>
+{% block content %}
 
-<p>Page should reload main access page in 3 seconds, otherwise <a href="{% url 'rfid:access_main' %}">click here.</a></p>
+    <h1>Access</h1>
 
-<a href="{% url 'admin:index' %}">Log in</a>
-</body>
-</html>
+    <h2>{{ message }}</h2>
+
+    <p>{{ description }}</p>
+
+    <p>Page should reload main access page in 3 seconds, otherwise <a href="{% url 'rfid:access_main' %}">click here.</a></p>
+
+    <a class="btn btn-primary" href="{% url 'admin:index' %}">Log in</a>
+
+{% endblock %}
