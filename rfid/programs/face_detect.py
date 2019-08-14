@@ -9,9 +9,6 @@ visual_recognition = VisualRecognitionV3(
 
 
 def face_crop(id, face_location):
-    # TODO implement with PILLOW
-    #  the method should save a fixed dimension squared image in the dir /smartaccess/media/face_crops
-    #  named <id>.jpg where id is the id log passed through get_photo_data()
     left = face_location['left']
     top = face_location['top']
     right = left + face_location['width']
@@ -19,13 +16,14 @@ def face_crop(id, face_location):
     img = Image.open('smartaccess/media/tmp.jpg')
     img = img.crop((left, top, right, bottom)).resize((300, 300), Image.ANTIALIAS)
     img.save('smartaccess/media/face_crops/{}.jpg'.format(id), "JPEG")
+    return 'smartaccess/media/face_crops/{}.jpg'.format(id)
 
 
 def get_photo_data(id):
+    # tmp.jpg is the last shot, it will be overwritten every successful access
     camera = PiCamera()
     camera.capture('smartaccess/media/tmp.jpg')
     camera.close()
-    # tmp.jpg is the last shot, it will be overwritten every successful access
     with open('smartaccess/media/tmp.jpg', 'rb') as images_file:
         result = visual_recognition.detect_faces(images_file).get_result()
         # select the first (and hopefully only) face
