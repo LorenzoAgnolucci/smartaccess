@@ -22,6 +22,9 @@ def face_crop(id, face_location):
 
 
 def get_photo_data(id):
+    camera = PiCamera()
+    camera.capture('smartaccess/media/tmp.jpg')
+    camera.close()
     # tmp.jpg is the last shot, it will be overwritten every successful access
     with open('smartaccess/media/tmp.jpg', 'rb') as images_file:
         result = visual_recognition.detect_faces(images_file).get_result()
