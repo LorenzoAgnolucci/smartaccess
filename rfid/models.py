@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 # The primary-key is the card id
 class RFIDCard(models.Model):
     card_id = models.IntegerField(primary_key=True)
-    remaining_accesses = models.IntegerField(default=0)
-    expiration_date = models.DateField(default=timezone.now)
+    remaining_accesses = models.IntegerField(default=0, help_text="0 won't change the number of remaining accesses")
+    expiration_date = models.DateField(default=timezone.now, help_text="Today's date won't change the expiration date")
 
     def __str__(self):
         return "Id: {}, remaining accesses: {}, expiration date: {}".format(self.card_id, self.remaining_accesses,
