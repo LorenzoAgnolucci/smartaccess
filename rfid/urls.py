@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -13,5 +13,6 @@ urlpatterns = [
                   path('write_card_scan/', views.WriteCardScanView.as_view(), name='write_card_scan'),
                   path('access/', views.AccessMainView.as_view(), name='access_main'),
                   path('access/result/', views.access_result, name='access_result'),
-                  path('access/result/<int:card_id>/', views.access_result, name='access_result')
+                  path('access/result/<int:card_id>/', views.access_result, name='access_result'),
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

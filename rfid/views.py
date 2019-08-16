@@ -1,5 +1,3 @@
-import time
-
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -10,13 +8,21 @@ from .forms import WriteCardForm
 # import mfrc522
 # from RPLCD import CharLCD
 import datetime
-import random
 
 from rfid.programs import face_detect
 
 
 class IndexView(TemplateView):
     template_name = 'rfid/index.html'
+
+    def setup(self, request, *args, **kwargs):
+        # Delete cache before new operations
+        try:
+            request.session.pop('card_id')
+        except KeyError:
+            pass
+
+        return super().setup(request, *args, **kwargs)
 
 
 class AddCardScanView(TemplateView):
@@ -26,38 +32,36 @@ class AddCardScanView(TemplateView):
 class WriteCardScanView(TemplateView):
     template_name = 'rfid/write_card_scan.html'
 
-    # def setup(self, request, *args, **kwargs):
-    #     return super().setup(request, *args, **kwargs)
-
-
-# class AddCardView(TemplateView):
-#     template_name = "rfid/add_card.html"
-#
 
 def add_card(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must authenticate before adding a card')
+        return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:add_card_scan')))
+
     try:
         card_id = request.session.pop('card_id')
-        request.session.modified = True
     except KeyError:
         # reader = mfrc522.SimpleMFRC522()
         # card_id = reader.read_id()
         card_id = input('Type card id')
 
     if RFIDCard.objects.filter(card_id=card_id).exists():
-        return HttpResponse("The card is already in the database")
+        return render(request, 'rfid/add_card_fail.html', context={'card_id': card_id})
 
     new_card = RFIDCard(card_id=card_id)
     new_card.save()
-    return HttpResponse('Added card {}'.format(card_id))
+    return render(request, 'rfid/add_card_success.html', context={'card_id': card_id})
 
 
 def write_card(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must authenticate before writing on a card')
+        return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:write_card_scan')))
     # messages.info(request, 'Scan the card you want to write on')
 
     # check if the card has been scanned before
     try:
         card_id = request.session.pop('card_id')
-        request.session.modified = True
     except KeyError:
         # reader = mfrc522.SimpleMFRC522()
         # card_id = reader.read_id()
@@ -94,7 +98,6 @@ def write_card(request):
         return render(request, 'rfid/write_card.html', {'form': form})
 
     except RFIDCard.DoesNotExist:
-        # messages.error(request, 'You have to add the card to the database before writing on it')
         request.session['card_id'] = card_id
         return render(request, 'rfid/write_card_add_new.html', context={'card_id': card_id})
 
