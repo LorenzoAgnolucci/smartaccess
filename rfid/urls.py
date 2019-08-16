@@ -14,6 +14,5 @@ urlpatterns = [
                   path('access/', views.AccessMainView.as_view(), name='access_main'),
                   path('access/result/', views.access_result, name='access_result'),
                   path('access/result/<int:card_id>/', views.access_result, name='access_result'),
-                  path('accounts/', include('django.contrib.auth.urls')),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
