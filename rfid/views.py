@@ -12,6 +12,8 @@ from .forms import WriteCardForm
 import datetime
 import random
 
+from rfid.programs import face_detect
+
 
 class IndexView(TemplateView):
     template_name = 'rfid/index.html'
@@ -65,14 +67,25 @@ def write_card(request):
 
     try:
         card = RFIDCard.objects.get(pk=card_id)
+        old_remaining_accesses = card.remaining_accesses
+        old_expiration_date = card.expiration_date
+
         if request.method == 'POST':
             # RFIDCard model bound form
             form = WriteCardForm(request.POST, instance=card)
-
             if form.is_valid():
                 # Validation is done at form level in the clean() method override
-                form.save()
-                return render(request, 'rfid/write_card_success.html', context=form.cleaned_data)
+
+                card.remaining_accesses += old_remaining_accesses
+                if form.cleaned_data["expiration_date"] != datetime.date.today():
+                    card.expiration_date = form.cleaned_data["expiration_date"]
+                else:
+                    card.expiration_date = old_expiration_date
+                card.save()
+
+                return render(request, 'rfid/write_card_success.html', context={'card_id': card_id,
+                                                                                'remaining_accesses': card.remaining_accesses,
+                                                                                'expiration_date': card.expiration_date})
         else:
             # unbound form
             form = WriteCardForm(initial={'card_id': card_id})
@@ -112,10 +125,23 @@ def access_result(request, card_id=None):
                 log_data['card'] = card
                 log_data['log_datetime'] = timezone.now()
 
-                new_log = Log(**log_data)
+                # TODO Code to add when you want to take a photo with the Raspberry (Part 1)
+                # new_log = Log(card=card, log_datetime=timezone.now())
 
+                new_log = Log(**log_data)
                 card.save()
                 new_log.save()
+
+                # TODO Code to add when you want to take a photo with the Raspberry (Part 2)
+                # new_log is saved two times because before the first save it does not have id needed by get_photo_data
+
+                # new_log = Log.objects.latest("log_datetime")
+                # data = face_detect.get_photo_data(new_log.id)
+                # new_log.age = data["age"]
+                # new_log.sex = data["sex"]
+                # new_log.photo = data["photo"]
+                # new_log.save()
+
                 message = 'Welcome!'
                 description = 'You have {} accesses left. ' \
                               'The card will expire on {}'.format(card.remaining_accesses,
