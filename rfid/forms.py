@@ -5,14 +5,7 @@ import datetime
 from .models import RFIDCard
 
 
-class WriteCardForm(forms.ModelForm):
-
-    # # FIXME clean method works. Try again with clean_card_id and find the best way to show the error
-    # def clean_card_id(self):
-    #     card_id = self.cleaned_data['card_id']
-    #     if RFIDCard.objects.filter(pk=card_id) == []:
-    #         raise forms.ValidationError('Card not registered, please add it to the database first')
-    #     return card_id
+class WriteCardForm(forms.Form):
 
     def clean(self):
         # To keep the main validation and error messages
