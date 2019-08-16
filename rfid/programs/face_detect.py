@@ -34,3 +34,5 @@ def get_photo_data(id):
                 'photo': face_crop(id, face['face_location'])}
         return data
 
+# FIXME Write an exception to cover the case where a face is not detected. In that case an IndexError is thrown because
+# FIXME the ['faces] list is empty
