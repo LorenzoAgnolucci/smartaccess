@@ -5,7 +5,7 @@ import datetime
 from .models import RFIDCard
 
 
-class WriteCardForm(forms.Form):
+class WriteCardForm(forms.ModelForm):
 
     def clean(self):
         # To keep the main validation and error messages
