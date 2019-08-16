@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block script %}
+{% block title %}Access Page{% endblock %}
+
+{% block extra-script %}
 
     <script type="text/javascript">
         function Redirect() {
@@ -22,6 +24,6 @@
 
     <p>Page should reload main access page in 3 seconds, otherwise <a href="{% url 'rfid:access_main' %}">click here.</a></p>
 
-    <a class="btn btn-primary" href="{% url 'admin:index' %}">Log in</a>
+    <a class="text-primary" href="{% url 'login' %}">Log in</a>
 
 {% endblock %}

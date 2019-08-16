@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+    <h1>Welcome!</h1>
+    <p>Go straight to the access page!</p>
+    <a href="{% url 'rfid:access_main' %}" class="btn btn-primary">Access Page</a>
+
+    <hr class="mt-4 mb-4">
+    {% if not user.is_authenticated %}
+        <p>Authenticate yourself to open the Management System</p>
+        <a class="btn btn-primary" href="{% url 'login' %}">Log in</a>
+    {% else %}
+        <p>Hi {{ user.username }}, <a class="btn btn-light" href="{% url 'logout' %}">Log out</a></p>
+    {% endif %}
+{% endblock %}

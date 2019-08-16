@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base_site.html' %}
+
+{% block title %}Write Card | Add{% endblock %}
 
 {% block content %}
-
-    {% block title %}Cannot Write Card{% endblock %}
 
     <p>The card {{ card_id }} is not in the database, would you like to add it?</p>
     <a class="btn btn-primary" href="{% url 'rfid:add_card' %}" role="button">Yes</a>

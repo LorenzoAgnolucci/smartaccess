@@ -1,0 +1,12 @@
+{% extends 'base_site.html' %}
+
+{% block title %}Add Card{% endblock %}
+
+{% block content %}
+
+    <h1>Card already in the database</h1>
+    <p>The card {{ card_id }} is already in the database. If you meant to update the expiring date or the remaining
+        accesses, please hit the button below</p>
+    <a class="btn btn-primary" href="{% url 'rfid:write_card' %}" role="button">Write</a>
+
+{% endblock %}
