@@ -64,7 +64,7 @@ def add_card(request):
 
 def write_card(request):
     if not request.user.is_authenticated:
-        messages.error(request, 'You must authenticate before writing on a card')
+        messages.error(request, 'You must authenticate before writing on a card', extra_tags='alert-danger')
         return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:write_card_scan')))
     # messages.info(request, 'Scan the card you want to write on')
 
