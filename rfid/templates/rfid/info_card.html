@@ -1,0 +1,40 @@
+{% extends 'base_site.html' %}
+
+{% block title %}Info Card{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8">
+
+        <h2>Info card {{ card_id }}</h2>
+
+        {% if messages %}
+
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+        {% else %}
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th scope="row">Card No</th>
+                    <td>{{ card_id }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Rem. accesses</th>
+                    <td>{{ remaining_accesses }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Exp. date</th>
+                    <td>{{ expiration_date }}</td>
+                </tr>
+                </tbody>
+            </table>
+        {% endif %}
+            <a class="btn btn-primary" href="{% url 'rfid:info_card_scan' %}" role="button">Go back</a>
+    </div>
+
+
+{% endblock %}
