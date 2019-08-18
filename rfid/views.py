@@ -124,7 +124,7 @@ def info_card(request):
                    'expiration_date': card.expiration_date}
     else:
         context = {'card_id': card_id}
-        messages.error(request, 'Your card is not registered', extra_tags='alert-warning')
+        messages.warning(request, 'Your card is not registered', extra_tags='alert-warning')
     return render(request, 'rfid/info_card.html', context=context)
 
 
