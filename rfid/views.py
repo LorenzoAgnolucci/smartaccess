@@ -140,7 +140,9 @@ def access_result(request, card_id=None):
             card = RFIDCard.objects.get(card_id=card_id)
             if card.remaining_accesses > 0 and card.expiration_date >= datetime.date.today():
                 card.remaining_accesses -= 1
-                log_data = get_photo_data()
+
+                # TODO try getting the latest id to avoid creating two logs
+                log_data = face_detect.get_photo_data(Log.objects.latest('id').id+1)
                 log_data['card'] = card
                 log_data['log_datetime'] = timezone.now()
 
