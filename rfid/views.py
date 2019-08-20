@@ -1,3 +1,4 @@
+from django.forms import Form
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -35,6 +36,10 @@ class WriteCardScanView(TemplateView):
 
 class InfoCardScanView(TemplateView):
     template_name = 'rfid/info_card_scan.html'
+
+
+class DeleteCardScanView(TemplateView):
+    template_name = 'rfid/delete_card_scan.html'
 
 
 # Displays the page waiting for the card, which redirect to the access view
@@ -128,6 +133,42 @@ def info_card(request):
     return render(request, 'rfid/info_card.html', context=context)
 
 
+def delete_card(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must authenticate before deleting a card', extra_tags='alert-danger')
+        return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:delete_card_scan')))
+
+    try:
+        card_id = request.session.pop('card_id')
+    except KeyError:
+        # reader = mfrc522.SimpleMFRC522()
+        # card_id = reader.read_id()
+        # TODO remember to revert to read_id() function
+        # card_id = '5279589593186'
+        card_id = input('Type card id')
+
+    if RFIDCard.objects.filter(card_id=card_id).exists():
+        card = RFIDCard.objects.get(card_id=card_id)
+        form = Form()
+        context = {'card_id': card.card_id,
+                   'remaining_accesses': card.remaining_accesses,
+                   'expiration_date': card.expiration_date,
+                   'form': form}
+        # FIXME redirected to delete_card after submit
+        if request.method == 'POST':
+            card.delete()
+            messages.success(request, 'The card {} has been deleted'.format(card_id), extra_tags='alert-success')
+            return render(request, 'rfid/delete_card_scan.html', context=context)
+        else:
+            request.session['card_id'] = card_id
+            return render(request, 'rfid/delete_card.html', context=context)
+    else:
+        context = {'card_id': card_id}
+        messages.warning(request, 'Your card is not registered', extra_tags='alert-warning')
+        return render(request, 'rfid/delete_card_scan.html', context=context)
+
+
+# card_id is eventually passed from the URL (see rfid/urls.py)
 def access_result(request, card_id=None):
     # reader = mfrc522.SimpleMFRC522()
     # card_id = reader.read_id()
@@ -199,4 +240,5 @@ def access_result(request, card_id=None):
         'description': description
     })
 
+# FIXME if you change url during scanning the input continues to read in background
 # TODO: Capire per bene come fare reindirizzamenti dopo POST per non fare submit due volte se si ricarica la pagina
