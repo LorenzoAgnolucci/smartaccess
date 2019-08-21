@@ -1,0 +1,11 @@
+{% extends 'base_site.html' %}
+
+{% block title %}Info Card{% endblock %}
+
+{% block content %}
+
+    <h1>Get info</h1>
+    <p>Click the button to scan the card and see its remaining accesses and expiration date</p>
+    <a class="btn btn-primary" href="{% url 'rfid:info_card' %}" role="button">Scan</a>
+
+{% endblock %}

@@ -7,8 +7,8 @@
 {% block content %}
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-danger" role="alert">
-                You must authenticate before adding a card!
+            <div class="alert {{ message.tags }}" role="alert">
+                {{ message }}
             </div>
         {% endfor %}
     {% endif %}

@@ -1,3 +1,4 @@
+from django.forms import Form
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -33,9 +34,22 @@ class WriteCardScanView(TemplateView):
     template_name = 'rfid/write_card_scan.html'
 
 
+class InfoCardScanView(TemplateView):
+    template_name = 'rfid/info_card_scan.html'
+
+
+class DeleteCardScanView(TemplateView):
+    template_name = 'rfid/delete_card_scan.html'
+
+
+# Displays the page waiting for the card, which redirect to the access view
+class AccessMainView(TemplateView):
+    template_name = 'rfid/access_main.html'
+
+
 def add_card(request):
     if not request.user.is_authenticated:
-        messages.error(request, 'You must authenticate before adding a card')
+        messages.error(request, 'You must authenticate before adding a card', extra_tags='alert-danger')
         return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:add_card_scan')))
 
     try:
@@ -55,7 +69,7 @@ def add_card(request):
 
 def write_card(request):
     if not request.user.is_authenticated:
-        messages.error(request, 'You must authenticate before writing on a card')
+        messages.error(request, 'You must authenticate before writing on a card', extra_tags='alert-danger')
         return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:write_card_scan')))
     # messages.info(request, 'Scan the card you want to write on')
 
@@ -76,7 +90,8 @@ def write_card(request):
 
         if request.method == 'POST':
             # RFIDCard model bound form
-            form = WriteCardForm(request.POST, instance=card)
+            print(card.expiration_date)
+            form = WriteCardForm(request.POST, instance=card, initial={"expiration_date": card.expiration_date})
             if form.is_valid():
                 # Validation is done at form level in the clean() method override
 
@@ -92,7 +107,8 @@ def write_card(request):
                                                                                 'expiration_date': card.expiration_date})
         else:
             # unbound form
-            form = WriteCardForm(initial={'card_id': card_id})
+            form = WriteCardForm(initial={'card_id': card_id,
+                                          'expiration_date': card.expiration_date})
 
         request.session['card_id'] = card_id
         return render(request, 'rfid/write_card.html', {'form': form})
@@ -102,16 +118,57 @@ def write_card(request):
         return render(request, 'rfid/write_card_add_new.html', context={'card_id': card_id})
 
 
-def get_photo_data():
-    # TODO shoot the photo, send it to Azure face or IBM watson, return crop, age and sex as a dict
-    return {'photo': None, 'age': 27, 'sex': 'M'}
+def info_card(request):
+    # reader = mfrc522.SimpleMFRC522()
+    # card_id = reader.read_id()
+    card_id = input('Type card id')
+    if RFIDCard.objects.filter(card_id=card_id).exists():
+        card = RFIDCard.objects.get(card_id=card_id)
+        context = {'card_id': card.card_id,
+                   'remaining_accesses': card.remaining_accesses,
+                   'expiration_date': card.expiration_date}
+    else:
+        context = {'card_id': card_id}
+        messages.warning(request, 'Your card is not registered', extra_tags='alert-warning')
+    return render(request, 'rfid/info_card.html', context=context)
 
 
-# Displays the page waiting for the card, which redirect to the access view
-class AccessMainView(TemplateView):
-    template_name = 'rfid/access_main.html'
+def delete_card(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must authenticate before deleting a card', extra_tags='alert-danger')
+        return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:delete_card_scan')))
+
+    try:
+        card_id = request.session.pop('card_id')
+    except KeyError:
+        # reader = mfrc522.SimpleMFRC522()
+        # card_id = reader.read_id()
+        # TODO remember to revert to read_id() function
+        # card_id = '5279589593186'
+        card_id = input('Type card id')
+
+    if RFIDCard.objects.filter(card_id=card_id).exists():
+        card = RFIDCard.objects.get(card_id=card_id)
+        form = Form()
+        context = {'card_id': card.card_id,
+                   'remaining_accesses': card.remaining_accesses,
+                   'expiration_date': card.expiration_date,
+                   'form': form}
+        # FIXME redirected to delete_card after submit
+        if request.method == 'POST':
+            card.delete()
+            messages.success(request, 'The card {} has been deleted'.format(card_id), extra_tags='alert-success')
+            return render(request, 'rfid/delete_card_scan.html', context=context)
+        else:
+            request.session['card_id'] = card_id
+            return render(request, 'rfid/delete_card.html', context=context)
+    else:
+        context = {'card_id': card_id}
+        messages.warning(request, 'Your card is not registered', extra_tags='alert-warning')
+        return render(request, 'rfid/delete_card_scan.html', context=context)
 
 
+# card_id is eventually passed from the URL (see rfid/urls.py)
 def access_result(request, card_id=None):
     # reader = mfrc522.SimpleMFRC522()
     # card_id = reader.read_id()
@@ -124,7 +181,8 @@ def access_result(request, card_id=None):
             card = RFIDCard.objects.get(card_id=card_id)
             if card.remaining_accesses > 0 and card.expiration_date >= datetime.date.today():
                 card.remaining_accesses -= 1
-                log_data = get_photo_data()
+
+                log_data = face_detect.get_photo_data(Log.objects.latest('id').id+1)
                 log_data['card'] = card
                 log_data['log_datetime'] = timezone.now()
 
@@ -181,9 +239,8 @@ def access_result(request, card_id=None):
         'description': description
     })
 
-# FIXME: Alert vengono mostrati tutti dopo ogni reindirizzamento e dopo aver fatto scan della carta
-# TODO change message display method, try using web pages redirect like in access_result view
-#  (also using the message framework)
-#  (forse perchè codice per messages è sia in index.html che in write_card.html)
-#  controllare come cancellare vecchi messaggi
-# TODO: Capire per bene come fare reindirizzamenti dopo POST per non fare submit due volte se si ricarica la pagina
+
+def dashboard(request):
+    return HttpResponse('Dashboard')
+
+# FIXME if you change url during scanning the input continues to read in background

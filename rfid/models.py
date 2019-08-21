@@ -26,6 +26,3 @@ class Log(models.Model):
     def __str__(self):
         return 'Id: {}, card: {}, time: {}'.format(self.id, self.card, self.log_datetime)
 
-
-# FIXME: Capire per bene come fare store di immagini. Decidere se cancellare Log se si cancella card (ammesso che si possa cancellare una card)
-# TODO check ImageField functioning

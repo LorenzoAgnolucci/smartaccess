@@ -1,0 +1,36 @@
+{% extends 'base_site.html' %}
+
+{% block title %}Delete Card{% endblock %}
+
+{% block content %}
+
+    <h1>Card info</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th scope="row">Card No</th>
+            <td>{{ card_id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Rem. accesses</th>
+            <td>{{ remaining_accesses }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Exp. date</th>
+            <td>{{ expiration_date }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    {# empty form with only the submit button #}
+    <form action="{% url 'rfid:delete_card' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn btn-danger"
+                type="submit"
+                value="Delete"
+                onclick="return confirm('Are you sure?')">Delete</button>
+    </form>
+
+{% endblock %}
