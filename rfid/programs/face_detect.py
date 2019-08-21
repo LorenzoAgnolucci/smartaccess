@@ -16,7 +16,9 @@ def face_crop(id, face_location):
     img = Image.open('smartaccess/media/tmp.jpg')
     img = img.crop((left, top, right, bottom)).resize((300, 300), Image.ANTIALIAS)
     img.save('smartaccess/media/face_crops/{}.jpg'.format(id), "JPEG")
-    return 'smartaccess/media/face_crops/{}.jpg'.format(id)
+    # the string contained in the photo field needs to be just the number followed by .jpg
+    # because the staticfiles dir is already pointing to smartaccess/media/face_crops
+    return '{}.jpg'.format(id)
 
 
 def get_photo_data(id):
@@ -24,6 +26,7 @@ def get_photo_data(id):
     camera = PiCamera()
     camera.capture('smartaccess/media/tmp.jpg')
     camera.close()
+
     with open('smartaccess/media/tmp.jpg', 'rb') as images_file:
         result = visual_recognition.detect_faces(images_file).get_result()
         try:

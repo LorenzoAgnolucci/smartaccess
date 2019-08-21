@@ -1,3 +1,5 @@
+import json
+
 from django.forms import Form
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -242,5 +244,10 @@ def access_result(request, card_id=None):
 
 def dashboard(request):
     return HttpResponse('Dashboard')
+
+
+def logs(request):
+    data = Log.objects.all()
+    return render(request, 'rfid/logs.html', context={'data': data})
 
 # FIXME if you change url during scanning the input continues to read in background

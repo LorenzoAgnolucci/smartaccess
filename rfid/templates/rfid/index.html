@@ -4,44 +4,53 @@
 
 {% block content %}
 
-{# BOOTSTRAP CARDS #}
+    {# BOOTSTRAP CARDS #}
     <div class="row">
-      <div class="col-sm">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Write</h5>
-            <p class="card-text">Write data on an existing card.</p>
-            <a href="{% url 'rfid:write_card_scan' %}" class="btn btn-primary">Go</a>
-          </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Write</h5>
+                    <p class="card-text">Write data on an existing card.</p>
+                    <a href="{% url 'rfid:write_card_scan' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-sm">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Add</h5>
-            <p class="card-text">Add card to the database</p>
-            <a href="{% url 'rfid:add_card_scan' %}" class="btn btn-primary">Go</a>
-          </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Add</h5>
+                    <p class="card-text">Add card to the database</p>
+                    <a href="{% url 'rfid:add_card_scan' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-sm">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Access</h5>
-            <p class="card-text">Client access page</p>
-            <a href="{% url 'rfid:access_main' %}" class="btn btn-primary">Go</a>
-          </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Access</h5>
+                    <p class="card-text">Client access page</p>
+                    <a href="{% url 'rfid:access_main' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-sm">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Info</h5>
-            <p class="card-text">Get card info</p>
-            <a href="{% url 'rfid:info_card_scan' %}" class="btn btn-primary">Go</a>
-          </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Info</h5>
+                    <p class="card-text">Get card info</p>
+                    <a href="{% url 'rfid:info_card_scan' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Delete</h5>
+                    <p class="card-text">Remove a card from the database</p>
+                    <a href="{% url 'rfid:delete_card_scan' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
