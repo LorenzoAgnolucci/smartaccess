@@ -11,10 +11,14 @@ visual_recognition = VisualRecognitionV3(
 def face_crop(id, face_location):
     left = face_location['left']
     top = face_location['top']
-    right = left + face_location['width']
-    bottom = top + face_location['height']
     img = Image.open('smartaccess/media/tmp.jpg')
-    img = img.crop((left, top, right, bottom)).resize((300, 300), Image.ANTIALIAS)
+    if face_location['width'] >= face_location['height']:
+        width = face_location['width']
+        height = face_location['width']
+    else:
+        width = face_location['height']
+        height = face_location['height']
+    img = img.crop((left, top, left + width, top + height)).resize((300, 300), Image.ANTIALIAS)
     img.save('smartaccess/media/face_crops/{}.jpg'.format(id), "JPEG")
     return 'smartaccess/media/face_crops/{}.jpg'.format(id)
 
