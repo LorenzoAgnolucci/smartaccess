@@ -21,6 +21,8 @@ urlpatterns = [
                   path('delete_card/', views.delete_card, name='delete_card'),
                   path('delete_card_scan/', views.DeleteCardScanView.as_view(), name='delete_card_scan'),
 
+                  path('dashboard/', views.dashboard, name='dashboard'),
+
                   path('access/', views.AccessMainView.as_view(), name='access_main'),
                   path('access/result/', views.access_result, name='access_result'),
                   path('access/result/<int:card_id>/', views.access_result, name='access_result'),

@@ -182,7 +182,6 @@ def access_result(request, card_id=None):
             if card.remaining_accesses > 0 and card.expiration_date >= datetime.date.today():
                 card.remaining_accesses -= 1
 
-                # TODO try getting the latest id to avoid creating two logs
                 log_data = face_detect.get_photo_data(Log.objects.latest('id').id+1)
                 log_data['card'] = card
                 log_data['log_datetime'] = timezone.now()
@@ -240,5 +239,8 @@ def access_result(request, card_id=None):
         'description': description
     })
 
+
+def dashboard(request):
+    return HttpResponse('Dashboard')
+
 # FIXME if you change url during scanning the input continues to read in background
-# TODO: Capire per bene come fare reindirizzamenti dopo POST per non fare submit due volte se si ricarica la pagina
