@@ -20,15 +20,8 @@
 
 {% block content %}
 
-    <h3>Change the expiration date and/or add more accesses to the scanned card</h3>
-    {#TODO Consider changing the text or the size to better visualize it    #}
-    {#{% if messages %}#}
-    {#    <script>#}
-    {#        {% for message in messages %}#}
-    {#            alert("{{ message }}");#}
-    {#        {% endfor %}#}
-    {#    </script>#}
-    {#{% endif %}#}
+    <h1>Write card</h1>
+    <p>Change the expiration date and/or add more accesses to the scanned card</p>
 
     <form action="{% url 'rfid:write_card' %}" method="post">
         {% csrf_token %}
