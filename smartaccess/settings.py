@@ -118,13 +118,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# media dir in staticfiles
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'smartaccess/media/face_crops'),
+    os.path.join(BASE_DIR, 'rfid/static'),
+]
+
 # Media files
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 MEDIA_URL = "/media/"
 
+# Login settings
 LOGIN_REDIRECT_URL = 'rfid:index'
 LOGOUT_REDIRECT_URL = '/'
-
-# TODO: Controllare che la gestione di MEDIA vada bene e che punti alla cartella giusta

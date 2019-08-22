@@ -1,7 +1,5 @@
 from django.db import models
-import datetime
 from django.utils import timezone
-from django.core.exceptions import ValidationError
 
 
 # The primary-key is the card id
