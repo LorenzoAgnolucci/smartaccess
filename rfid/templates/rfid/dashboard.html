@@ -7,19 +7,18 @@
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-           {#var django_data = {{ array|safe }};#}
-           {# var data = google.visualization.arrayToDataTable(djangoData);#}
+           var djangoData = {{ array|safe }};
+           var data = google.visualization.arrayToDataTable(djangoData);
 
-            var data = google.visualization.arrayToDataTable([
-              ['Name', 'Donuts eaten', 'Day'],
-              ['Michael' , 5, 1],
-              ['Elisa', 7, 1],
-              ['Robert', 3, 3],
-              ['John', 2, 2],
-              ['Jessica', 6, 7],
-              ['Aaron', 1, 6],
-              ['Margareth', 8, 1]
-            ]);
+           var result = google.visualization.data.group(
+                // input data
+              data,
+              // key columns (columns to group by)
+              [0, 1],
+              // third column (index 2) will be summed
+              [{'column': 2, 'aggregation': google.visualization.data.sum, 'type': 'number'}]
+
+            );
 
             var dashboard = new google.visualization.Dashboard(
                 document.getElementById('dashboard_div')
@@ -29,7 +28,7 @@
                 'controlType': 'NumberRangeFilter',
                 'containerId': 'filter_div',
                 'options': {
-                    'filterColumnLabel': 'Donuts eaten'
+                    'filterColumnLabel': 'Age'
                 }
             });
 
@@ -37,7 +36,7 @@
                 'controlType': 'CategoryFilter',
                 'containerId': 'filter_category_div',
                 'options': {
-                    'filterColumnLabel': 'Day',
+                    'filterColumnLabel': 'Sex',
                     'allowMultiple': true,
                     'allowTyping': false,
                     'showRangeValues': false
@@ -52,13 +51,16 @@
                     'height': 500,
                     'pieSliceText': 'value',
                     'legend': 'right',
-                    'isStacked': true
-                }
+                    'isStacked': true,
+                    'title': 'Number of accesses'
+                },
+                'view': {'columns': [0, 2]}
             });
 
             dashboard.bind([donutRangeSlider, donutCategoryFilter], pieChart);
 
-            dashboard.draw(data);
+            dashboard.draw(result);
+
         }
     </script>
 {% endblock %}
