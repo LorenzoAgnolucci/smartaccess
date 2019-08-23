@@ -1,7 +1,5 @@
 from django.db import models
-import datetime
 from django.utils import timezone
-from django.core.exceptions import ValidationError
 
 
 # The primary-key is the card id
@@ -26,6 +24,3 @@ class Log(models.Model):
     def __str__(self):
         return 'Id: {}, card: {}, time: {}'.format(self.id, self.card, self.log_datetime)
 
-
-# FIXME: Capire per bene come fare store di immagini. Decidere se cancellare Log se si cancella card (ammesso che si possa cancellare una card)
-# TODO check ImageField functioning

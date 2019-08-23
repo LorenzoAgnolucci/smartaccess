@@ -1,0 +1,22 @@
+{% extends 'base_site.html' %}
+
+{% block title %}Delete Card{% endblock %}
+
+{% block content %}
+
+    <h1>Delete a card</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <p>Click the button to scan the card you want to delete from the database</p>
+    <div class="alert alert-warning">WARNING! All relative data will be lost forever (logs, photos, statistics...)
+    </div>
+    <a class="btn btn-primary" href="{% url 'rfid:delete_card' %}" role="button">Scan</a>
+    <p class="small">Don't worry, you will confirm it after the scanning</p>
+{% endblock %}
