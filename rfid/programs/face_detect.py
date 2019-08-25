@@ -1,6 +1,6 @@
 from ibm_watson import VisualRecognitionV3
 from PIL import Image
-from picamera import PiCamera
+# from picamera import PiCamera
 
 
 visual_recognition = VisualRecognitionV3(
@@ -40,7 +40,7 @@ def get_photo_data(id):
             data = {'age': (face['age']['min'] + face['age']['max']) / 2,
                     'sex': face['gender']['gender'][0],
                     'photo': face_crop(id, face['face_location'])}
-        except:
+        except (IndexError, KeyError, Exception):
             print('Face not detected')
             data = {'age': None,
                     'sex': None,
