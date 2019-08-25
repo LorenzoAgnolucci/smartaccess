@@ -3,7 +3,7 @@
 {% block extra-script %}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart', 'controls']});
+        google.charts.load('current', {'packages': ['corechart', 'controls']});
         google.charts.setOnLoadCallback(drawDashboard);
 
         function drawDashboard() {
@@ -17,18 +17,18 @@
             drawChart(data);
 
             var hourFilter = new google.visualization.ControlWrapper({
-               controlType: 'NumberRangeFilter',
-               containerId: 'filter_hour_div',
-               dataTable: data,
-               options: {
-                   filterColumnIndex: 1
-               }
+                controlType: 'NumberRangeFilter',
+                containerId: 'filter_hour_div',
+                dataTable: data,
+                options: {
+                    filterColumnIndex: 1
+                }
             });
 
             google.visualization.events.addListener(hourFilter, 'statechange', stateChangeHandler);
 
             hourFilter.draw();
-            
+
             var sexFilter = new google.visualization.ControlWrapper({
                 controlType: 'CategoryFilter',
                 containerId: 'filter_sex_div',
@@ -40,18 +40,18 @@
                     'caption': 'Choose sex'
                 }
             });
-            
-            google.visualization.events.addListener(sexFilter, 'statechange',stateChangeHandler);
+
+            google.visualization.events.addListener(sexFilter, 'statechange', stateChangeHandler);
 
             sexFilter.draw();
 
             var ageFilter = new google.visualization.ControlWrapper({
-               controlType: 'NumberRangeFilter',
-               containerId: 'filter_age_div',
-               dataTable: data,
-               options: {
-                   filterColumnIndex: 3
-               }
+                controlType: 'NumberRangeFilter',
+                containerId: 'filter_age_div',
+                dataTable: data,
+                options: {
+                    filterColumnIndex: 3
+                }
             });
 
             google.visualization.events.addListener(ageFilter, 'statechange', stateChangeHandler);
@@ -59,11 +59,11 @@
             ageFilter.draw();
 
             var options = {
-                    'width': 1000,
-                    'height': 500,
-                    'legend': 'right',
-                    'title': 'Number of accesses'
-                };
+                'width': 1000,
+                'height': 500,
+                'legend': 'right',
+                'title': 'Number of accesses'
+            };
 
             function drawChart(dataTable) {
                 var dataGroup = google.visualization.data.group(
@@ -73,10 +73,12 @@
                 );
 
                 var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-                chart.draw(dataGroup, {'width': 1000,
+                chart.draw(dataGroup, {
+                    'width': 1000,
                     'height': 500,
                     'legend': 'right',
-                    'title': 'Number of accesses'});
+                    'title': 'Number of accesses'
+                });
             }
 
             function stateChangeHandler() {
@@ -94,7 +96,7 @@
                         column: 2,
                         test: function (value) {
                             return sexSelection.selectedValues.includes(value) ||
-                                    sexSelection.selectedValues.length === 0
+                                sexSelection.selectedValues.length === 0
                         }
                     },
                     {
@@ -111,15 +113,18 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block content %}
+{% block outer %}
+    <div class="row">
+        <h1>Dashboard</h1>
+    </div>
 
-    <h1>Dashboard</h1>
-
-    <div id="dashboard_div">
-        <div id="filter_age_div"></div>
-        <div id="filter_hour_div"></div>
-        <div id="filter_sex_div"></div>
-        <div id="chart_div"></div>
+    <div id="dashboard_div" class="row">
+        <div class="col-md-3 align-self-center">
+            <div id="filter_age_div" class="row"></div>
+            <div id="filter_hour_div" class="row"></div>
+            <div id="filter_sex_div" class="row"></div>
+        </div>
+        <div id="chart_div" class="col-md-9"></div>
     </div>
 
 {% endblock %}
