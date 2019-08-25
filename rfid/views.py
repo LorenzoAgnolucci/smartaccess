@@ -11,6 +11,7 @@ from .forms import WriteCardForm
 # import mfrc522
 # from RPLCD import CharLCD
 import datetime
+import json
 
 from rfid.programs import face_detect
 
@@ -243,7 +244,9 @@ def access_result(request, card_id=None):
 
 
 def dashboard(request):
-    return HttpResponse('Dashboard')
+    data = [[str(x.log_datetime.date().strftime('%A')), x.log_datetime.hour, x.sex, x.age] for x in Log.objects.all()]
+    data.insert(0, ["Day", "Hour", "Sex", "Age"])
+    return render(request, 'rfid/dashboard.html', context={'array': json.dumps(data)})
 
 
 def logs(request):

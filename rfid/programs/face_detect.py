@@ -1,6 +1,6 @@
 from ibm_watson import VisualRecognitionV3
 from PIL import Image
-from picamera import PiCamera
+# from picamera import PiCamera
 
 
 visual_recognition = VisualRecognitionV3(
@@ -11,10 +11,14 @@ visual_recognition = VisualRecognitionV3(
 def face_crop(id, face_location):
     left = face_location['left']
     top = face_location['top']
-    right = left + face_location['width']
-    bottom = top + face_location['height']
     img = Image.open('smartaccess/media/tmp.jpg')
-    img = img.crop((left, top, right, bottom)).resize((300, 300), Image.ANTIALIAS)
+    if face_location['width'] >= face_location['height']:
+        width = face_location['width']
+        height = face_location['width']
+    else:
+        width = face_location['height']
+        height = face_location['height']
+    img = img.crop((left, top, left + width, top + height)).resize((300, 300), Image.ANTIALIAS)
     img.save('smartaccess/media/face_crops/{}.jpg'.format(id), "JPEG")
     # the string contained in the photo field needs to be just the number followed by .jpg
     # because the staticfiles dir is already pointing to smartaccess/media/face_crops
@@ -36,7 +40,7 @@ def get_photo_data(id):
             data = {'age': (face['age']['min'] + face['age']['max']) / 2,
                     'sex': face['gender']['gender'][0],
                     'photo': face_crop(id, face['face_location'])}
-        except:
+        except (IndexError, KeyError, Exception):
             print('Face not detected')
             data = {'age': None,
                     'sex': None,
