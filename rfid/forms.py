@@ -32,7 +32,7 @@ class WriteCardForm(forms.ModelForm):
         }
         help_texts = {
             "remaining_accesses": "0 won't change the number of remaining accesses",
-            "expiration_date": "Today's date won't change the expiration date"
+            "expiration_date": "The date shown initially is the current expiration date"
         }
         labels = {
             "remaining_accesses": "Accesses to add"
