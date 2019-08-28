@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h1>Main operations</h1>
+    <h1>Main apps</h1>
 
     {# BOOTSTRAP CARDS #}
     <div class="row">
@@ -50,6 +50,24 @@
                     <h5 class="card-title">Delete</h5>
                     <p class="card-text">Remove a card from the database</p>
                     <a href="{% url 'rfid:delete_card_scan' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Dashboard</h5>
+                    <p class="card-text">Visualize statistics on the data</p>
+                    <a href="{% url 'rfid:dashboard' %}" class="btn btn-primary mt-auto">Go</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 py-2" style="max-width: 18rem;">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Logs</h5>
+                    <p class="card-text">See all the logs</p>
+                    <a href="{% url 'rfid:logs' %}" class="btn btn-primary mt-auto">Go</a>
                 </div>
             </div>
         </div>
