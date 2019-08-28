@@ -50,6 +50,10 @@ class AccessMainView(TemplateView):
     template_name = 'rfid/access_main.html'
 
 
+class AboutView(TemplateView):
+    template_name = 'rfid/about.html'
+
+
 def add_card(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You must authenticate before adding a card', extra_tags='alert-danger')
@@ -250,6 +254,10 @@ def dashboard(request):
 
 
 def logs(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Logs page contains private data, you must authenticate before accessing the logs', extra_tags='alert-danger')
+        return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:logs')))
+
     data = Log.objects.all()
     return render(request, 'rfid/logs.html', context={'data': data})
 

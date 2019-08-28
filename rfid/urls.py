@@ -24,6 +24,8 @@ urlpatterns = [
                   path('dashboard/', views.dashboard, name='dashboard'),
                   path('logs', views.logs, name='logs'),
 
+                  path('about/', views.AboutView.as_view(), name='about'),
+
                   path('access/', views.AccessMainView.as_view(), name='access_main'),
                   path('access/result/', views.access_result, name='access_result'),
                   path('access/result/<int:card_id>/', views.access_result, name='access_result'),
