@@ -25,16 +25,27 @@
 {% block nav %}
 {% endblock %}
 
-<div class="container">
+<div class="container h-100 pt-3 flex-column">
     <div class="row justify-content-center mt-auto">
-    {% block outer %}
-        <div class="col-lg-8">
-            {% block content %}
-            {% endblock %}
-        </div>
-    {% endblock %}
+        {% block outer %}
+            <div class="col-lg-8">
+                {% block content %}
+                {% endblock %}
+            </div>
+        {% endblock %}
     </div>
 </div>
+<div class="fixed-bottom">
+    <!-- Footer -->
+    <footer class="page-footer font-small bg-primary text-white mt-auto mastfoot">
 
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3 bottom">© 2019 Website under GPL:
+            <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="text-white-50">GNU General Public Licence</a>
+        </div>
+        <!-- Copyright -->
+
+    </footer>
+</div>
 </body>
 </html>
