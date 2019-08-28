@@ -31,8 +31,9 @@ class WriteCardForm(forms.ModelForm):
             "expiration_date": forms.DateInput(attrs={'class': 'datepicker', 'id': 'datepicker'})
         }
         help_texts = {
-            "remaining_accesses": "0 won't change the number of remaining accesses",
-            "expiration_date": "The date shown initially is the current expiration date"
+            "remaining_accesses": "0 won't change the number of remaining accesses.",
+            "expiration_date": "The date shown initially is the current expiration date."
+                               " A date earlier than the current one won't modify the expiration date."
         }
         labels = {
             "remaining_accesses": "Accesses to add"
