@@ -58,13 +58,6 @@
 
             ageFilter.draw();
 
-            var options = {
-                'width': 1000,
-                'height': 500,
-                'legend': 'right',
-                'title': 'Number of accesses'
-            };
-
             function drawChart(dataTable) {
                 var dataGroup = google.visualization.data.group(
                     dataTable,
@@ -114,17 +107,15 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block outer %}
-    <div class="row">
-        <h1>Dashboard</h1>
-    </div>
-
-    <div id="dashboard_div" class="row">
-        <div class="col-md-3 align-self-center">
-            <div id="filter_age_div" class="row"></div>
-            <div id="filter_hour_div" class="row"></div>
-            <div id="filter_sex_div" class="row"></div>
+    <div class="container-fluid justify-content-center">
+        <h1 class="text-center">Dashboard</h1>
+        <div id="dashboard_div" class="row mx-auto">
+            <div id="chart_div" class="col-md-8"></div>
+            <div class="col-sm-3 align-self-center">
+                <div id="filter_age_div" class="row"></div>
+                <div id="filter_hour_div" class="row"></div>
+                <div id="filter_sex_div" class="row"></div>
+            </div>
         </div>
-        <div id="chart_div" class="col-md-9"></div>
     </div>
-
 {% endblock %}
