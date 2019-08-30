@@ -8,9 +8,6 @@
 
         function drawDashboard() {
 
-            {# FIXME sort chart to display days in order. sexFilter caption does not work#}
-            {# TODO Make chart use var options defined outside the function drawChart()#}
-
             var djangoData = {{ array|safe }};
             var data = google.visualization.arrayToDataTable(djangoData);
 
@@ -35,9 +32,12 @@
                 dataTable: data,
                 options: {
                     filterColumnIndex: 2,
-                    'allowMultiple': true,
-                    'allowTyping': true,
-                    'caption': 'Choose sex'
+                    ui: {
+                        allowMultiple: true,
+                        allowTyping: true,
+                        caption: 'Choose sex'
+                    }
+
                 }
             });
 
@@ -65,8 +65,10 @@
                     [{column: 1, aggregation: google.visualization.data.count, type: 'number', label: 'Count'}]
                 );
 
+                var sortedData = sortByDayOfTheWeek(dataGroup);
+
                 var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-                chart.draw(dataGroup, {
+                chart.draw(sortedData, {
                     'width': 1000,
                     'height': 500,
                     'legend': 'right',
@@ -99,6 +101,21 @@
                     }
                 ]));
                 drawChart(view);
+            }
+
+            function sortByDayOfTheWeek(dataTable) {
+                var order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                var sortedDataTable = new google.visualization.arrayToDataTable([[{label: "Day", type: "string"},
+                                                                                {label: "Count", type: "number"}]]);
+
+                for (var i = 0; i < order.length; i++) {
+                  for (var j = 0; j < dataTable.getNumberOfRows(); j++){
+                      if (dataTable.getValue(j, 0) === order[i]) {
+                      sortedDataTable.addRow([order[i], dataTable.getValue(j, 1)]);
+                      }
+                  }
+                }
+                return sortedDataTable;
             }
         }
     </script>

@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 from .models import RFIDCard, Log
 from .forms import WriteCardForm
-# import mfrc522
+import mfrc522
 # from RPLCD import CharLCD
 import datetime
 import json
@@ -97,13 +97,12 @@ def write_card(request):
 
         if request.method == 'POST':
             # RFIDCard model bound form
-            print(card.expiration_date)
             form = WriteCardForm(request.POST, instance=card, initial={"expiration_date": card.expiration_date})
             if form.is_valid():
                 # Validation is done at form level in the clean() method override
 
                 card.remaining_accesses += old_remaining_accesses
-                if form.cleaned_data["expiration_date"] != datetime.date.today():
+                if form.cleaned_data["expiration_date"] > old_expiration_date:
                     card.expiration_date = form.cleaned_data["expiration_date"]
                 else:
                     card.expiration_date = old_expiration_date
