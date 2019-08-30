@@ -1,14 +1,11 @@
-import json
-
 from django.forms import Form
 from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.utils import timezone
 from django.views.generic import TemplateView
 from .models import RFIDCard, Log
 from .forms import WriteCardForm
-import mfrc522
+# import mfrc522
 # from RPLCD import CharLCD
 import datetime
 import json
@@ -16,15 +13,19 @@ import json
 from rfid.programs import face_detect
 
 
+def clear_session_var(request):
+    try:
+        request.session.pop('card_id')
+    except KeyError:
+        pass
+
+
 class IndexView(TemplateView):
     template_name = 'rfid/index.html'
 
     def setup(self, request, *args, **kwargs):
         # Delete cache before new operations
-        try:
-            request.session.pop('card_id')
-        except KeyError:
-            pass
+        clear_session_var(request)
 
         return super().setup(request, *args, **kwargs)
 
@@ -71,6 +72,7 @@ def add_card(request):
 
     new_card = RFIDCard(card_id=card_id)
     new_card.save()
+    request.session['card_id'] = card_id
     return render(request, 'rfid/add_card_success.html', context={'card_id': card_id})
 
 
@@ -247,12 +249,16 @@ def access_result(request, card_id=None):
 
 
 def dashboard(request):
+    clear_session_var(request)
+
     data = [[str(x.log_datetime.date().strftime('%A')), x.log_datetime.hour, x.sex, x.age] for x in Log.objects.all()]
     data.insert(0, ["Day", "Hour", "Sex", "Age"])
     return render(request, 'rfid/dashboard.html', context={'array': json.dumps(data)})
 
 
 def logs(request):
+    clear_session_var(request)
+
     if not request.user.is_authenticated:
         messages.error(request, 'Logs page contains private data, you must authenticate before accessing the logs', extra_tags='alert-danger')
         return redirect('%s?next=%s' % (reverse('login'), reverse('rfid:logs')))
