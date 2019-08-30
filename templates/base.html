@@ -1,7 +1,7 @@
 {% load staticfiles %}
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -22,12 +22,12 @@
 
 </head>
 
-<body>
+<body class="h-100">
 
 {% block nav %}
 {% endblock %}
 
-<div class="container h-100 pt-3 flex-column mw-100">
+<div class="container h-100 pt-3 mw-100">
     <div class="row justify-content-center mt-auto">
         {% block outer %}
             <div class="col-lg-8">
@@ -37,9 +37,8 @@
         {% endblock %}
     </div>
 </div>
-<div class="fixed-bottom">
     <!-- Footer -->
-    <footer class="page-footer font-small" style="background-color: #4285F4">
+    <footer id="sticky-footer" class="page-footer font-small" style="background-color: #4285F4">
 
         <!-- Copyright -->
         <div class="footer-copyright text-center py-3 bottom">© 2019 Website under GPL:
@@ -48,6 +47,5 @@
         <!-- Copyright -->
 
     </footer>
-</div>
 </body>
 </html>

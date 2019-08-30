@@ -16,6 +16,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'rfid:access_main' %}">Access</a>
                 </li>
+                {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown"
@@ -41,6 +42,7 @@
                         <a class="dropdown-item" href="{% url 'rfid:logs' %}">Logs</a>
                     </div>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'rfid:about' %}">About</a>
                 </li>
@@ -57,7 +59,7 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="navbar-link" href="{% url 'login' %}">Log In</a>
+                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
                     </li>
                 {% endif %}
             </ul>
