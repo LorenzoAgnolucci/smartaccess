@@ -6,7 +6,7 @@ from django.utils import timezone
 class RFIDCard(models.Model):
     card_id = models.IntegerField(primary_key=True)
     remaining_accesses = models.IntegerField(default=0)
-    expiration_date = models.DateField(default=timezone.now)
+    expiration_date = models.DateField(default=timezone.datetime.now)
 
     def __str__(self):
         return "Id: {}, remaining accesses: {}, expiration date: {}".format(self.card_id, self.remaining_accesses,
