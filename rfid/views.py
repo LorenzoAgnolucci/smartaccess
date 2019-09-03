@@ -12,8 +12,10 @@ import mfrc522
 # from RPLCD import CharLCD
 import datetime
 import json
+import RPi.GPIO as GPIO
 
-from rfid.programs import face_detect
+from rfid.programs import face_detect, RFIDSingleton
+from rfid.programs.RFIDSingleton import RFIDSingleton
 
 
 class IndexView(TemplateView):
@@ -62,9 +64,11 @@ def add_card(request):
     try:
         card_id = request.session.pop('card_id')
     except KeyError:
-        # reader = mfrc522.SimpleMFRC522()
-        # card_id = reader.read_id()
-        card_id = input('Type card id')
+        reader = RFIDSingleton()
+        reader.set_reading(True)
+        card_id = reader.read_id()
+        reader.set_reading(False)
+        # card_id = input('Type card id')
 
     if RFIDCard.objects.filter(card_id=card_id).exists():
         return render(request, 'rfid/add_card_fail.html', context={'card_id': card_id})
@@ -84,11 +88,13 @@ def write_card(request):
     try:
         card_id = request.session.pop('card_id')
     except KeyError:
-        # reader = mfrc522.SimpleMFRC522()
-        # card_id = reader.read_id()
+        reader = RFIDSingleton()
+        reader.set_reading(True)
+        card_id = reader.read_id()
+        reader.set_reading(False)
         # TODO remember to revert to read_id() function
         # card_id = '5279589593186'
-        card_id = input('Type card id')
+        # card_id = input('Type card id')
 
     try:
         card = RFIDCard.objects.get(pk=card_id)
@@ -125,9 +131,11 @@ def write_card(request):
 
 
 def info_card(request):
-    # reader = mfrc522.SimpleMFRC522()
-    # card_id = reader.read_id()
-    card_id = input('Type card id')
+    reader = RFIDSingleton()
+    reader.set_reading(True)
+    card_id = reader.read_id()
+    reader.set_reading(False)
+    # card_id = input('Type card id')
     if RFIDCard.objects.filter(card_id=card_id).exists():
         card = RFIDCard.objects.get(card_id=card_id)
         context = {'card_id': card.card_id,
@@ -147,11 +155,13 @@ def delete_card(request):
     try:
         card_id = request.session.pop('card_id')
     except KeyError:
-        # reader = mfrc522.SimpleMFRC522()
-        # card_id = reader.read_id()
+        reader = RFIDSingleton()
+        reader.set_reading(True)
+        card_id = reader.read_id()
+        reader.set_reading(False)
         # TODO remember to revert to read_id() function
         # card_id = '5279589593186'
-        card_id = input('Type card id')
+        # card_id = input('Type card id')
 
     if RFIDCard.objects.filter(card_id=card_id).exists():
         card = RFIDCard.objects.get(card_id=card_id)
@@ -176,10 +186,16 @@ def delete_card(request):
 
 # card_id is eventually passed from the URL (see rfid/urls.py)
 def access_result(request, card_id=None):
-    # reader = mfrc522.SimpleMFRC522()
-    # card_id = reader.read_id()
+
     if card_id is None:
-        card_id = input('Type card id')
+        try:
+            reader = RFIDSingleton()
+            reader.set_reading(True)
+            card_id = reader.read_id()
+            reader.set_reading(False)
+        except:
+            print("Exception")
+        # card_id = input('Type card id')
     # lcd = CharLCD(cols=16, rows=2, pin_rs=37, pin_e=35, pins_data=[40, 38, 36, 32, 33, 31, 29, 23])
     # lcd.write_string(u'Scan your card')
     try:
@@ -187,27 +203,30 @@ def access_result(request, card_id=None):
             card = RFIDCard.objects.get(card_id=card_id)
             if card.remaining_accesses > 0 and card.expiration_date >= datetime.date.today():
                 card.remaining_accesses -= 1
+                GPIO.output(18, GPIO.HIGH)
 
-                log_data = face_detect.get_photo_data(Log.objects.latest('id').id+1)
-                log_data['card'] = card
-                log_data['log_datetime'] = timezone.now()
+                # log_data = face_detect.get_photo_data(Log.objects.latest('id').id+1)
+                # log_data['card'] = card
+                # log_data['log_datetime'] = timezone.now()
 
                 # TODO Code to add when you want to take a photo with the Raspberry (Part 1)
-                # new_log = Log(card=card, log_datetime=timezone.now())
+                new_log = Log(card=card, log_datetime=timezone.datetime.now())
 
-                new_log = Log(**log_data)
+                # new_log = Log(**log_data)
                 card.save()
                 new_log.save()
 
                 # TODO Code to add when you want to take a photo with the Raspberry (Part 2)
                 # new_log is saved two times because before the first save it does not have id needed by get_photo_data
 
-                # new_log = Log.objects.latest("log_datetime")
-                # data = face_detect.get_photo_data(new_log.id)
-                # new_log.age = data["age"]
-                # new_log.sex = data["sex"]
-                # new_log.photo = data["photo"]
-                # new_log.save()
+                new_log = Log.objects.latest("id")
+                GPIO.output(26, GPIO.HIGH)
+                data = face_detect.get_photo_data(new_log.id)
+                GPIO.output(26, GPIO.LOW)
+                new_log.age = data["age"]
+                new_log.sex = data["sex"]
+                new_log.photo = data["photo"]
+                new_log.save()
 
                 message = 'Welcome!'
                 description = 'You have {} accesses left. ' \
@@ -219,6 +238,7 @@ def access_result(request, card_id=None):
                 # time.sleep(3)
                 # lcd.clear()
             elif card.remaining_accesses == 0:
+                GPIO.output(17, GPIO.HIGH)
                 message = 'No accesses'
                 description = 'You have no more accesses remained. ' \
                               'Please recharge your card at the reception'
@@ -226,6 +246,7 @@ def access_result(request, card_id=None):
                 # time.sleep(3)
                 # lcd.clear()
             else:
+                GPIO.output(17, GPIO.HIGH)
                 message = 'Card expired'
                 description = 'We\'re sorry, your last {} accesses expired on {}, ' \
                               'please buy new accesses at the reception'.format(card.remaining_accesses,
@@ -234,6 +255,7 @@ def access_result(request, card_id=None):
                 # time.sleep(3)
                 # lcd.clear()
     except RFIDCard.DoesNotExist:
+        GPIO.output(17, GPIO.HIGH)
         message = 'Card not registered'
         description = 'It seems that we haven\'t registered this card. ' \
                       'Please ask for help at the reception'
