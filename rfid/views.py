@@ -257,7 +257,8 @@ def access_result(request, card_id=None):
                 # time.sleep(3)
                 # lcd.clear()
     except RFIDCard.DoesNotExist:
-        GPIO.output(17, GPIO.HIGH)
+        if card_id:
+            GPIO.output(17, GPIO.HIGH)
         message = 'Card not registered'
         description = 'It seems that we haven\'t registered this card. ' \
                       'Please ask for help at the reception'
