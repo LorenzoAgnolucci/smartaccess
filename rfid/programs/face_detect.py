@@ -1,6 +1,6 @@
 from ibm_watson import VisualRecognitionV3
 from PIL import Image
-# from picamera import PiCamera
+from picamera import PiCamera
 
 
 visual_recognition = VisualRecognitionV3(
