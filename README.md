@@ -1,1 +1,6 @@
-Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+# SmartAccess
+_A web app for user access management_
+
+See a brief presentation of the project [here](https://docs.google.com/presentation/d/e/2PACX-1vSHhxzaw54qZQlRqYt0gzNCq7jvY5YFysMtnNS8_zYVJ4dvPoOW28_ld0fvWwgTOuzo4Zd3u70goLvS/embed?start=false&loop=false&delayms=3000&slide=id.g442eb61d9d_0_0)
+
+This project was developed by Lorenzo Agnolucci and Vittorio Zampinetti for the Multimedia Design and Production course exam at the University of Florence.
